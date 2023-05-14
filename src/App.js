@@ -1,25 +1,73 @@
-import logo from './logo.svg';
+import React,{useEffect,useContext} from 'react';
 import './App.css';
+import {Outlet, createBrowserRouter } from 'react-router-dom';
+import Signup from './components/Signup/Signup';
+import Login from './components/Login/Login';
+import CreatePage from './pages/Create';
+import ViwePost from './pages/ViewPost';
+
+import { AuthContext,FirebaseContext } from './store/Context';
+import Post from './store/PostContext';
+
+
+import Home from './pages/Home';
+
+
+
 
 function App() {
+const {setUser} = useContext(AuthContext)
+const {firebase} = useContext(FirebaseContext)
+
+useEffect(()=>{
+ 
+ firebase.auth().onAuthStateChanged((user)=>{
+  setUser(user)
+ })
+},[])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <Post>
+    <Outlet/>
+    </Post>
+   
+     
+
+  </>
   );
 }
 
-export default App;
+
+export const  appRouter = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        path: '/signup',
+        element : <Signup/>
+      },
+      {
+        path: '/',
+        element: <Home/>
+      },
+      {
+        path: '/login',
+        element: <Login/>
+      },
+      {
+        path: '/create',
+        element: <CreatePage/>
+      },
+      {
+        path: '/view',
+        element: <ViwePost/>
+      }
+    ]
+    
+  },
+  
+])
+
+// export default App;
+
